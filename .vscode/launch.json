@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-BillingSoftwareApplication<billingSoftware>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.abubakar.billingSoftware.BillingSoftwareApplication",
+            "projectName": "billingSoftware",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
