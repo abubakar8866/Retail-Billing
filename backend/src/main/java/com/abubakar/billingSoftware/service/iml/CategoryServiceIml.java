@@ -5,12 +5,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.abubakar.billingSoftware.entity.CategoryEntity;
 import com.abubakar.billingSoftware.io.CategoryRequest;
 import com.abubakar.billingSoftware.io.CategoryResponse;
 import com.abubakar.billingSoftware.repository.CategoryRepository;
 import com.abubakar.billingSoftware.service.CategoryService;
+import com.abubakar.billingSoftware.service.FileUploadService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,9 +22,13 @@ public class CategoryServiceIml implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private final FileUploadService fileUploadService;
+
     @Override
-    public CategoryResponse add(CategoryRequest request) {
+    public CategoryResponse add(CategoryRequest request,MultipartFile file) {
+        String imgUrl = fileUploadService.uploadFile(file);
         CategoryEntity newCategory = convertToEntity(request);
+        newCategory.setImgUrl(imgUrl);
         newCategory = categoryRepository.save(newCategory);
         return convertToResponse(newCategory);
     }
@@ -54,6 +60,13 @@ public class CategoryServiceIml implements CategoryService {
                 .stream()
                 .map(categoryEntity -> convertToResponse(categoryEntity))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void delete(String categoryId) {
+        CategoryEntity existingCategory = categoryRepository.findByCategoryId(categoryId).orElseThrow(()-> new RuntimeException("Category is not fount "+categoryId));
+        fileUploadService.deleteFile(existingCategory.getImgUrl());
+        categoryRepository.delete(existingCategory);
     }
     
 }
