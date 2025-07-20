@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.abubakar.billingSoftware.io.AuthRequest;
 import com.abubakar.billingSoftware.io.AuthResponse;
+import com.abubakar.billingSoftware.service.UserService;
 import com.abubakar.billingSoftware.service.iml.AppUserDetailsService;
 import com.abubakar.billingSoftware.util.JwtUtil;
 
@@ -28,6 +29,7 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final AppUserDetailsService appUserDetailsService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/login")
@@ -35,8 +37,8 @@ public class AuthController {
         authenticate(request.getEmail(),request.getPassword());
         final UserDetails userDetails = appUserDetailsService.loadUserByUsername(request.getEmail());
         final String jwtToken = jwtUtil.generateToken(userDetails);
-        //fetch the role from repository
-        return new AuthResponse(request.getEmail(), jwtToken, "USER");
+        String role = userService.getUserRole(request.getEmail());
+        return new AuthResponse(request.getEmail(), jwtToken, role);
     }
     
     private void authenticate(String email, String password) throws Exception {

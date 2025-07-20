@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.abubakar.billingSoftware.io.CategoryRequest;
-import com.abubakar.billingSoftware.io.CategoryResponse;
-import com.abubakar.billingSoftware.service.CategoryService;
+import com.abubakar.billingSoftware.io.ItemRequest;
+import com.abubakar.billingSoftware.io.ItemResponse;
+import com.abubakar.billingSoftware.service.ItemService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -23,36 +23,35 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class CategoryController {
+public class ItemController {
     
-    private final CategoryService categoryService;
+    private final ItemService itemService;
 
-    @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponse addCategory(@RequestPart("category") String categoryString,
-                                        @RequestPart("file") MultipartFile file){
+    @PostMapping("/admin/items")
+    public ItemResponse addItem(@RequestPart("item") String itemString, @RequestPart("file") MultipartFile file){
         ObjectMapper objectMapper = new ObjectMapper();
-        CategoryRequest request = null;
+        ItemRequest itemRequest = null;
         try {
-            request = objectMapper.readValue(categoryString, CategoryRequest.class);
-            return categoryService.add(request,file);
+            itemRequest = objectMapper.readValue(itemString, ItemRequest.class);
+            return itemService.add(itemRequest, file);
         } catch (JsonProcessingException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Exception occured while parsing the json"+e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Error occured while processing the json.");
         }
     }
 
-    @GetMapping
-    public List<CategoryResponse> fetchCategories(){
-        return categoryService.read();
+    @GetMapping("/items")
+    public List<ItemResponse> readItems(){
+        return itemService.fetchItems();
     }
 
-    @DeleteMapping("/admin/categories/{categoryId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void remove(@PathVariable String categoryId){
+    @DeleteMapping("/admin/item/{itemId}")
+    public void removeItem(@PathVariable String itemId){
         try {
-            categoryService.delete(categoryId);
+            itemService.deleteItem(itemId);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,e.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Item not found.");
         }
     }
 
