@@ -30,6 +30,7 @@ public class ItemController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/admin/items")
     public ItemResponse addItem(@RequestPart("item") String itemString, @RequestPart("file") MultipartFile file){
+        System.out.println("Received item upload with file: " + file.getOriginalFilename());
         ObjectMapper objectMapper = new ObjectMapper();
         ItemRequest itemRequest = null;
         try {
