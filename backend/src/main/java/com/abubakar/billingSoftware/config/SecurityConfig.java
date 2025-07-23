@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -39,8 +38,8 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login","/encode","/uploads/**","/categories","/error").permitAll()
-                .requestMatchers("/categories","/items").hasAnyRole("USER","ADMIN")
+                .requestMatchers("/login","/encode","/uploads/**","/error").permitAll()
+                .requestMatchers("/categories","/items","/orders").hasAnyRole("USER","ADMIN")
                 //.requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
