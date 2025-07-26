@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.abubakar.billingSoftware.io.OrderRequest;
 import com.abubakar.billingSoftware.io.OrderResponse;
+import com.abubakar.billingSoftware.io.PaymentVerificationRequest;
 
 public interface OrderService {
     
@@ -12,4 +13,6 @@ public interface OrderService {
     void deleteUser(String orderId);
 
     List<OrderResponse> getLatestOrders();
+
+    OrderResponse verifyPayment(PaymentVerificationRequest request);
 }
