@@ -30,7 +30,8 @@ public class PaymentController {
     public RazorpayOrderResponse createRazorpayOrder(@RequestBody PaymentRequest request) throws RazorpayException{
         return razorpayService.createOrder(request.getAmount(), request.getCurrency());
     }
-
+        
+    @PostMapping("/verify")
     public OrderResponse verifyPayment(@RequestBody PaymentVerificationRequest request){
         return orderService.verifyPayment(request);
     }

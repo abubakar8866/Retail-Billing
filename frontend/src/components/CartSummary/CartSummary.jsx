@@ -5,7 +5,7 @@ import {createOrder, deleteOrder} from "../../../service/orderService";
 import {toast} from "react-hot-toast";
 import {createRazorpayOrder, verifyPayment} from "../../../service/paymentService";
 import { AppConstants } from "../../util/constants";
-//import ReceiptPopup from "../ReceiptPopup/ReceiptPopup";
+import ReceiptPopup from "../ReceiptPopup/ReceiptPopup";
 
 
 const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName}) => {
@@ -13,6 +13,8 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
     const {cartItems,clearCart} = useContext(AppContext);
     const [isProcessing,setIsProcessing] = useState(false);
     const [orderDetails,setOrderDetails] = useState(null);
+    const [showPopup, setShowPopup] = useState(false);
+
     const totalAmount = cartItems.reduce((total, item) => total + item.price * item.quantity,0);
     const tax = totalAmount * 0.01;
     const grandTotal = totalAmount + tax;
@@ -20,8 +22,16 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
     const clearAll = () => {
         setCustomerName("");
         setMobileNumer("");
-        clearCart();
-        
+        clearCart();        
+    }
+
+    const placeOrder = () => {
+        setShowPopup(true);
+        clearAll();
+    }
+
+    const handlePrintReceipt = () => {
+        window.print();
     }
     
     const loadRazorpayScript = () => {
@@ -29,7 +39,7 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
             const script = document.createElement('script');
             script.src = "https://checkout.razorpay.com/v1/checkout.js";
             script.onload = () => resolve(true);
-            script.onload = () => resolve(false);
+            script.onerror = () => reject(false);
             document.body.appendChild(script);
         });
     }
@@ -61,7 +71,7 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
             subtotal: totalAmount,
             tax,
             grandTotal,
-            paymentMode: paymentMode.toUpperCase()
+            paymentMethod: paymentMode.toUpperCase()
         }
 
         setIsProcessing(true);
@@ -88,7 +98,7 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
                     name:"My Retail Shop",
                     description:"Order Payment",
                     handler:async (response) => {
-                        await verifyPaymentHandler(response);
+                        await verifyPaymentHandler(response, saveData);
                     },
                     prefill:{
                         name:customerName,
@@ -128,7 +138,7 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
             orderId: savedOrder.orderId
         };
         try {
-            const paymentResponse = verifyPayment(paymentData);
+            const paymentResponse = await verifyPayment(paymentData);
             if (paymentResponse.status === 200) {
                 toast.success("Payment Successful...");
                 setOrderDetails({
@@ -149,7 +159,7 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
     };
 
     return (
-        <div className="mt-1">
+        <div className="mt-0">
 
             <div className="cart-summary-details">
                 <div className="d-flex justify-content-between mb-2">
@@ -166,16 +176,34 @@ const CartSummary = ({customerName,mobileNumber,setMobileNumer,setCustomerName})
                 </div>
             </div>
 
-            <div className="d-flex gap-3">
-                <button className="btn btn-success flex-grow-1">Cash</button>
-                <button className="btn btn-primary flex-grow-1">UPI</button>
+            <div className="d-flex gap-3" style={{marginBottom: '4px'}}>
+                <button className="btn btn-success flex-grow-1" onClick={() => completePayment("cash")} disabled={isProcessing}>
+                    {isProcessing ? "Processing...." : "Cash"}
+                </button>
+                <button className="btn btn-primary flex-grow-1" onClick={() => completePayment("upi")} disabled={isProcessing}>
+                {isProcessing ? "Processing...." : "UPI"}
+                </button>
             </div>
 
-            <div className="d-flex gap-1 mt-1">
-                <button className="btn bnt-warning flex-grow-1">
+            <div className="d-flex gap-1 mt-0">
+                <button className="btn btn-warning flex-grow-1" onClick={placeOrder} disabled={isProcessing || !orderDetails}>
                     Place Order
                 </button>
             </div>
+
+            {
+                showPopup && (
+                    <ReceiptPopup 
+                        orderDetails={{
+                            ...orderDetails,
+                            razorpayOrderId: orderDetails.paymentDetails?.razorpayOrderId,
+                            razorpayPaymentId: orderDetails.paymentDetails?.razorpayPaymentId,
+                        }}
+                        onClose={() => setShowPopup(false)}
+                        onPrint={handlePrintReceipt}
+                    />
+                )
+            }
 
         </div>
     );

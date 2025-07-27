@@ -38,7 +38,7 @@ const Explore = () => {
                         setCustomerName={setCustomerName}
                     ></CutomerForm>
                 </div>
-                <hr className="my-3 text-light"/>
+                <hr className="my-1 text-light"/>
                 <div className="cart-items-container" style={{height:'55%',overflowY:'auto'}}>
                     <CartItems></CartItems>
                 </div>
