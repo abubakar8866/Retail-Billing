@@ -1,6 +1,8 @@
 package com.abubakar.billingSoftware.service;
 
+import java.time.LocalDate;
 import java.util.List;
+
 
 import com.abubakar.billingSoftware.io.OrderRequest;
 import com.abubakar.billingSoftware.io.OrderResponse;
@@ -15,4 +17,10 @@ public interface OrderService {
     List<OrderResponse> getLatestOrders();
 
     OrderResponse verifyPayment(PaymentVerificationRequest request);
+
+    Double sumSalesByDate(LocalDate date);
+
+    Long countByOrderDate(LocalDate date);
+
+    List<OrderResponse> findRecentOrders();
 }
