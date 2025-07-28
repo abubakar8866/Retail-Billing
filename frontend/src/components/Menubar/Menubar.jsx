@@ -64,16 +64,7 @@ const Menubar = () => {
                             <img src={assets.profile} alt="" height={32} width={32}/>
                         </a>
                         <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='navbarDropDown'>
-                            <li>
-                                <a href="" className='dropdown-item'>
-                                    Settings
-                                </a>
-                                <a href="" className='dropdown-item'>
-                                    Activity log
-                                </a>
-                                <li>
-                                    <hr className='dropdown-divider'/>
-                                </li>
+                            <li>                                
                                 <a href="" className='dropdown-item' onClick={logout}>
                                     Logout
                                 </a>
