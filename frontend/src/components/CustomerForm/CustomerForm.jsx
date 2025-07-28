@@ -6,13 +6,27 @@ const CustomerForm = ({customerName,mobileNumber,setMobileNumer,setCustomerName}
             <div className="mb-3">
                 <div className="d-flex align-items-center gap-2">
                     <label htmlFor="customerName" className="col-4">Customer name</label>
-                    <input type="text" className="form-control form-control-sm" id="customerName" onChange={(e) => setCustomerName(e.target.value)} value={customerName}/>
+                    <input 
+                        type="text" 
+                        className="form-control form-control-sm" 
+                        id="customerName" 
+                        onChange={(e) => setCustomerName(e.target.value)} 
+                        value={customerName}
+                        required
+                    />
                 </div>
             </div>
             <div className="mb-3">
                 <div className="d-flex align-items-center gap-2">
                     <label htmlFor="mobileNumber" className="col-4">Mobile Number</label>
-                    <input type="text" className="form-control form-control-sm" id="mobileNumber" onChange={(e) => setMobileNumer(e.target.value)} value={mobileNumber}/>
+                    <input 
+                        type="text" 
+                        className="form-control form-control-sm" 
+                        id="mobileNumber" 
+                        onChange={(e) => setMobileNumer(e.target.value)} 
+                        value={mobileNumber}
+                        required
+                    />
                 </div>
             </div>
         </div>
